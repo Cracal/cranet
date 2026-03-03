@@ -1,5 +1,9 @@
 #include "cra_socket.h"
 #include "cra_assert.h"
+#ifdef CRA_OS_LINUX
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #if 1 // socket address
 

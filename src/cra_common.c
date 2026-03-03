@@ -1,6 +1,5 @@
 #include "cra_conn.h"
 #include "cra_log.h"
-#include <timeapi.h>
 
 #undef CRA_LOG_NAME
 #define CRA_LOG_NAME "CRANET-Common"

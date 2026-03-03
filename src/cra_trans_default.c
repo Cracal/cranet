@@ -415,8 +415,8 @@ static CRA_ACCEPT_FN(cra_cudp_trans_accept)
 #else
     *retfd = trans->fd;
     cra_buffer_append_size(inputbuf, n);
-    return (CraTrans_i **)trans;
 #endif
+    return (CraTrans_i **)trans;
 }
 
 static CRA_CONNECT_FN(cra_cudp_trans_connect)

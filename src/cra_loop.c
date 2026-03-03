@@ -7,6 +7,9 @@
 #include "cra_refcnt.h"
 #include "cra_time.h"
 #include "threads/cra_thread.h"
+#ifdef CRA_OS_LINUX
+#include <sys/timerfd.h>
+#endif
 
 #undef CRA_LOG_NAME
 #define CRA_LOG_NAME "CRANET-Loop"

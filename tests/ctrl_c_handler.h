@@ -10,9 +10,13 @@
     }
 #define CTRL_C_HANDLER_SET() SetConsoleCtrlHandler(__ctrl_c_handler, TRUE)
 #else
+
+#include <signal.h>
+
 #define CTRL_C_HANDLER_DEF(_g_main_loop_name)      \
     static void __ctrl_c_handler(int sig)          \
     {                                              \
+        CRA_UNUSED_VALUE(sig);                     \
         if (_g_main_loop_name != NULL)             \
             cra_loop_stop_safe(_g_main_loop_name); \
     }

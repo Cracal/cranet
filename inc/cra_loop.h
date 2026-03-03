@@ -46,6 +46,7 @@ typedef struct _CraLoop      CraLoop;
 #ifdef CRA_OS_WIN
 typedef HANDLE cra_timerfd_t;
 #else
+typedef CraIO cra_timerfd_t;
 #endif
 
 struct _CraLoop

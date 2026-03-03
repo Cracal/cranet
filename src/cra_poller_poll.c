@@ -8,6 +8,8 @@
 
 #ifdef CRA_OS_WIN
 #define poll WSAPoll
+#else
+#include <poll.h>
 #endif
 
 #undef CRA_LOG_NAME

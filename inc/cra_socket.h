@@ -16,6 +16,13 @@
 #ifdef CRA_OS_WIN
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/uio.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <fcntl.h>
 #endif
 
 #if 1 // socket address

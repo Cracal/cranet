@@ -14,7 +14,8 @@
 #include "cra_event.h"
 
 #ifdef CRA_OS_LINUX
-#define CRA_WITH_EPOLL
+// #define CRA_WITH_EPOLL
+#define CRA_WITH_POLL
 #elif defined(CRA_OS_WIN)
 #define CRA_WITH_POLL
 #else

@@ -56,7 +56,7 @@ typedef cra_atomic_flag_t cra_spinlock_t;
 #ifdef CRA_OS_WIN
 #define __cra_spinlock_pause YieldProcessor()
 #elif defined(__i386) || defined(__x86_64__)
-#define __cra_spinlock_pause __asm__ volatile("pause" ::"memory")
+#define __cra_spinlock_pause __asm__ volatile("pause" ::: "memory")
 #else
 #define __cra_spinlock_pause
 #endif
