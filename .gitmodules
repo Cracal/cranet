@@ -1,0 +1,4 @@
+[submodule "external/crabase"]
+	path = external/crabase
+	url = git@github.com:Cracal/crabase.git
+	branch = main
