@@ -83,31 +83,27 @@ test_socket(void)
     client_fd = cra_socket_open(cra_sockaddr_get_family(&address), SOCK_STREAM);
     assert_always(cra_socket_is_valid(client_fd));
     assert_always(cra_socket_connect(client_fd, &address));
-    cra_log_info(g_cranet_logger, "client: connect to %s",
-                 cra_sockaddr_to_endpoint(&address, endpoint, sizeof(endpoint)));
+    cranet_log_info("client: connect to %s", cra_sockaddr_to_endpoint(&address, endpoint, sizeof(endpoint)));
 
     accept_fd = cra_socket_accept(listen_fd, &address);
     assert_always(cra_socket_is_valid(accept_fd));
-    cra_log_info(g_cranet_logger, "server: accept from %s",
-                 cra_sockaddr_to_endpoint(&address, endpoint, sizeof(endpoint)));
+    cranet_log_info("server: accept from %s", cra_sockaddr_to_endpoint(&address, endpoint, sizeof(endpoint)));
     assert_always(cra_socket_get_remote_addr(accept_fd, &address2));
-    cra_log_info(g_cranet_logger, "server: remote addr: %s",
-                 cra_sockaddr_to_endpoint(&address2, endpoint, sizeof(endpoint)));
+    cranet_log_info("server: remote addr: %s", cra_sockaddr_to_endpoint(&address2, endpoint, sizeof(endpoint)));
     assert_always(cra_sockaddr_cmp(&address, &address2) == 0);
     assert_always(cra_socket_get_local_addr(accept_fd, &address2));
-    cra_log_info(g_cranet_logger, "server: local addr: %s",
-                 cra_sockaddr_to_endpoint(&address2, endpoint, sizeof(endpoint)));
+    cranet_log_info("server: local addr: %s", cra_sockaddr_to_endpoint(&address2, endpoint, sizeof(endpoint)));
 
     int n = cra_socket_send(accept_fd, "hello world", 11);
-    cra_log_info(g_cranet_logger, "server: send bytes: %d", n);
+    cranet_log_info("server: send bytes: %d", n);
     char buffer[128];
     n = cra_socket_recv(client_fd, buffer, sizeof(buffer));
-    cra_log_info(g_cranet_logger, "client: recv bytes: %d", n);
+    cranet_log_info("client: recv bytes: %d", n);
 
     n = cra_socket_send(client_fd, "hello", 5);
-    cra_log_info(g_cranet_logger, "client: send bytes: %d", n);
+    cranet_log_info("client: send bytes: %d", n);
     n = cra_socket_recv(accept_fd, buffer, sizeof(buffer));
-    cra_log_info(g_cranet_logger, "server: recv bytes: %d", n);
+    cranet_log_info("server: recv bytes: %d", n);
 
     cra_socket_close(listen_fd);
     cra_socket_close(accept_fd);
@@ -125,9 +121,9 @@ test_socket(void)
     assert_always(cra_socket_is_valid(client_fd));
 
     n = cra_socket_sendto(client_fd, "hello world", sizeof("hello world"), &address);
-    cra_log_info(g_cranet_logger, "client: sendto bytes: %d", n);
+    cranet_log_info("client: sendto bytes: %d", n);
     n = cra_socket_recvfrom(accept_fd, buffer, sizeof(buffer), &address2);
-    cra_log_info(g_cranet_logger, "server: recvfrom bytes: %d", n);
+    cranet_log_info("server: recvfrom bytes: %d", n);
     assert_always(strcmp(buffer, "hello world") == 0);
 
     cra_socket_close(accept_fd);
@@ -137,14 +133,14 @@ test_socket(void)
 int
 main(void)
 {
-    g_cranet_logger = cra_log_open("CRANET", CRA_LOG_LV_TRACE, false, false);
-    cra_initialize_sockets();
+    cranet_log_init(CRA_LOG_LV_TRACE, true, false, 0, NULL);
+    cranet_startup();
 
     test_socket_address();
     test_socket();
 
-    cra_log_close(g_cranet_logger);
-    cra_shutdown_sockets();
+    cranet_cleanup();
+    cranet_log_uninit();
 
     cra_memory_leak_report();
 

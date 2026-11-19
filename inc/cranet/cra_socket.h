@@ -23,12 +23,6 @@
 #undef CRA_LOG_NAME
 #define CRA_LOG_NAME "CRANET-Socket"
 
-CRA_NAPI void
-cra_initialize_sockets(void);
-
-CRA_NAPI void
-cra_shutdown_sockets(void);
-
 typedef struct CraSockAddr CraSockAddr;
 typedef struct CraSocket   CraSocket;
 
@@ -232,12 +226,14 @@ cra_socket_recvfrom(CraSocket sock, void *buf, int len, CraSockAddr *remote_addr
 static inline bool
 cra_socket_get_local_addr(CraSocket sock, CraSockAddr *addr_buf)
 {
+    addr_buf->size = sizeof(addr_buf->addr);
     return getsockname(sock.fd, (struct sockaddr *)addr_buf, &addr_buf->size) == 0;
 }
 
 static inline bool
 cra_socket_get_remote_addr(CraSocket sock, CraSockAddr *addr_buf)
 {
+    addr_buf->size = sizeof(addr_buf->addr);
     return getpeername(sock.fd, (struct sockaddr *)addr_buf, &addr_buf->size) == 0;
 }
 

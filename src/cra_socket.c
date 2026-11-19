@@ -3,28 +3,6 @@
 #include <netdb.h>
 #endif
 
-void
-cra_initialize_sockets(void)
-{
-#ifdef CRA_OS_WINDOWS
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR)
-    {
-        cra_log_fatal(g_cranet_logger, "WSAStartup failed, error: %d", WSAGetLastError());
-        exit(EXIT_FAILURE);
-    }
-#else
-#endif
-}
-
-void
-cra_shutdown_sockets(void)
-{
-#ifdef CRA_OS_WINDOWS
-    WSACleanup();
-#endif
-}
-
 #if 1 // sock address
 
 void(cra_sockaddr_init)(CraSockAddr *addr, const char *host, uint16_t port, cra_family_t family)
@@ -35,7 +13,7 @@ void(cra_sockaddr_init)(CraSockAddr *addr, const char *host, uint16_t port, cra_
     int err = getaddrinfo(host, NULL, &hints, &res);
     if (err != 0)
     {
-        cra_log_fatal(g_cranet_logger, "Get address info failed, error: %d", err);
+        cranet_log_fatal("Get address info failed, error: %d", err);
         exit(EXIT_FAILURE);
     }
 
