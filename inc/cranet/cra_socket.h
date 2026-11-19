@@ -1,6 +1,7 @@
 #ifndef __CRANET_CRA_SOCKET_H__
 #define __CRANET_CRA_SOCKET_H__
 #include "cranet/cra_defs.h"
+#include "crabase/cra_macro.h"
 #include "crabase/collections/cra_collects.h"
 
 #ifdef CRA_OS_WINDOWS
@@ -55,7 +56,10 @@ typedef sa_family_t cra_family_t;
 CRA_NAPI void
 cra_sockaddr_init(CraSockAddr *addr, const char *host, uint16_t port, cra_family_t family);
 // void init(CraSockAddr *addr, const char *host, uint16_t port, cra_family_t family = AF_UNSPEC)
-#define cra_sockaddr_init(_addr, _host, _port, ...) cra_sockaddr_init(_addr, _host, _port, __VA_ARGS__ + 0)
+#define cra_sockaddr_init(addr, host, ...)                                                      \
+    cra_sockaddr_init(addr, host, CRA_CAT(CRA_SOCKADDR_ARG, CRA_CNT(__VA_ARGS__))(__VA_ARGS__))
+#define CRA_SOCKADDR_ARG1(port)         port, AF_UNSPEC
+#define CRA_SOCKADDR_ARG2(port, family) port, family
 
 static inline cra_family_t
 cra_sockaddr_get_family(const CraSockAddr *addr)
@@ -93,15 +97,15 @@ cra_sockaddr_get_ip(const CraSockAddr *addr)
         return (const void *)&addr->addr.v6.sin6_addr;
 }
 
-static inline bool
+static inline const char *
 cra_sockaddr_to_ip(const CraSockAddr *addr, char *buf, size_t buf_size)
 {
     const void  *addr_ptr = cra_sockaddr_get_ip(addr);
     cra_family_t family = cra_sockaddr_get_family(addr);
-    return inet_ntop(family, addr_ptr, buf, buf_size) != NULL;
+    return inet_ntop(family, addr_ptr, buf, buf_size);
 }
 
-CRA_NAPI bool
+CRA_NAPI const char *
 cra_sockaddr_to_endpoint(const CraSockAddr *addr, char *buf, size_t buf_size);
 
 CRA_NAPI int
@@ -146,7 +150,7 @@ cra_socket_is_valid(const CraSocket sock)
 }
 
 static inline CraSocket
-cra_socket_open(uint16_t family, int type)
+cra_socket_open(cra_family_t family, int type)
 {
     return (CraSocket){ .fd = socket(family, type, 0) };
 }
@@ -158,17 +162,6 @@ cra_socket_close(CraSocket sock)
     closesocket(sock.fd);
 #else
     close(sock.fd);
-#endif
-}
-
-static inline void
-cra_socket_close_and_clear(CraSocket sock)
-{
-    cra_socket_close(sock);
-#ifdef CRA_OS_WINDOWS
-    sock.fd = INVALID_SOCKET;
-#else
-    sock.fd = -1;
 #endif
 }
 
@@ -201,9 +194,7 @@ cra_socket_accept(CraSocket listen_sock, CraSockAddr *from_addr)
 static inline bool
 cra_socket_connect(CraSocket sock, const CraSockAddr *remote_addr)
 {
-    // return connect(sock.fd, (struct sockaddr *)remote_addr, remote_addr->size) == 0;
-    int ret = connect(sock.fd, (struct sockaddr *)remote_addr, remote_addr->size);
-    return ret == 0;
+    return connect(sock.fd, (struct sockaddr *)remote_addr, remote_addr->size) == 0;
 }
 
 static inline int
