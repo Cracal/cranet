@@ -1,4 +1,7 @@
 #include "cranet/cra_socket.h"
+#ifndef CRA_OS_WINDOWS
+#include <netdb.h>
+#endif
 
 void
 cra_initialize_sockets(void)
