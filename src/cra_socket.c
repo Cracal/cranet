@@ -48,7 +48,7 @@ void(cra_sockaddr_init)(CraSockAddr *addr, const char *host, uint16_t port, cra_
     freeaddrinfo(res);
 }
 
-bool
+const char *
 cra_sockaddr_to_endpoint(const CraSockAddr *addr, char *buf, size_t buf_size)
 {
     int   len;
@@ -60,11 +60,13 @@ cra_sockaddr_to_endpoint(const CraSockAddr *addr, char *buf, size_t buf_size)
     buf[0] = '\0';
 
     if (!cra_sockaddr_to_ip(addr, ipstr, sizeof(ipstr)))
-        return false;
+        return NULL;
 
     fmt = cra_sockaddr_is_ipv4(addr) ? "%s:%hu" : "[%s]:%hu";
     len = snprintf(buf, buf_size, fmt, ipstr, cra_sockaddr_get_port(addr));
-    return len > 0 && (size_t)len < buf_size;
+    if (len > 0 && (size_t)len < buf_size)
+        return buf;
+    return NULL;
 }
 
 static inline int
